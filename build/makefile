@@ -39,9 +39,9 @@ SERVER_OBJS=$(OUT_OBJ)server.o
 
 all: $(OUT_EXE)rshook
 
-$(OUT_EXE)rshook: $(SERVER_HEADERS) $(GEN_OBJS) $(SRC_DIR)rshook.h $(SRC_DIR)rshook.cpp
+$(OUT_EXE)rshook: $(SERVER_OBJS) $(SRC_DIR)rshook.h $(SRC_DIR)rshook.cpp
 	@mkdir -p $(OUT_EXE)
-	$(CPP) $(CPPFLAGS) -o $(OUT_EXE)rshook $(GEN_OBJS) $(SRC_DIR)rshook.cpp -luring
+	$(CPP) $(CPPFLAGS) -o $(OUT_EXE)rshook $(SERVER_OBJS) $(SRC_DIR)rshook.cpp -luring
 
 $(OUT_OBJ)server.o: $(SERVER_HEADERS) $(SERVER_SOURCES)
 	@mkdir -p $(OUT_OBJ)
