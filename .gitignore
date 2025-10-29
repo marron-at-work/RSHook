@@ -1,6 +1,9 @@
 # Prerequisites
 *.d
 
+# Binary
+build/output/rshook
+
 # Compiled Object files
 *.slo
 *.lo

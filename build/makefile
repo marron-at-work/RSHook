@@ -22,17 +22,8 @@ CPPFLAGS_OPT.release=-O3 -march=x86-64-v3
 CPPFLAGS=${CPPFLAGS_OPT.${BUILD}} ${CPP_STDFLAGS}
 CPPFLAGS_TEST=${CPPFLAGS_OPT.dev} ${CPP_STDFLAGS}
 
-CC=gcc 
-CSTDFLAGS=-DEXPORT -std=gnu17
-
-CFLAGS_OPT.debug=-O0 -g -ggdb -fno-omit-frame-pointer
-CFLAGS_OPT.dev=-O0 -g -ggdb -fno-omit-frame-pointer
-CFLAGS_OPT.release=-O3 -march=x86-64-v3
-CFLAGS=${CFLAGS_OPT.${BUILD}} ${CSTDFLAGS}
-CFLAGS_TEST=${CFLAGS_OPT.dev} ${CSTDFLAGS}
-
 SERVER_HEADERS=$(SERVER_DIR)server.h
-SERVER_SOURCES=$(SERVER_DIR)server.c
+SERVER_SOURCES=$(SERVER_DIR)server.cpp
 SERVER_OBJS=$(OUT_OBJ)server.o
 
 # MAKEFLAGS += -j4
@@ -45,7 +36,7 @@ $(OUT_EXE)rshook: $(SERVER_OBJS) $(SRC_DIR)rshook.h $(SRC_DIR)rshook.cpp
 
 $(OUT_OBJ)server.o: $(SERVER_HEADERS) $(SERVER_SOURCES)
 	@mkdir -p $(OUT_OBJ)
-	$(CC) $(CFLAGS) -o $(OUT_OBJ)server.o -c $(SERVER_SOURCES)
+	$(CPP) $(CPPFLAGS) -o $(OUT_OBJ)server.o -c $(SERVER_SOURCES)
 
 clean:
 	rm -rf $(OUT_EXE)* $(OUT_OBJ)*.o $(BIN_DIR)*
