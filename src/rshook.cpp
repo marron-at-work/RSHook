@@ -1,14 +1,13 @@
-#include "rshook.h"
+#include "server/server.h"
 
-struct io_uring ring;
+#define DEFAULT_SERVER_PORT 8000
 
-void sigint_handler(int signo)
+int main(int argc, char **argv)
 {
-    io_uring_queue_exit(&ring);
-    exit(0);
-}
+    initialize("/static/");
 
-int main(int argc, char **argv) 
-{
-    return 0;
+    int server_socket_fd;
+    setup_listening_socket(DEFAULT_SERVER_PORT, server_socket_fd);
+
+    server_loop(server_socket_fd);
 }

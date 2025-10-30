@@ -22,7 +22,7 @@ CPPFLAGS_OPT.release=-O3 -march=x86-64-v3
 CPPFLAGS=${CPPFLAGS_OPT.${BUILD}} ${CPP_STDFLAGS}
 CPPFLAGS_TEST=${CPPFLAGS_OPT.dev} ${CPP_STDFLAGS}
 
-SERVER_HEADERS=$(SERVER_DIR)server.h
+SERVER_HEADERS=$(SERVER_DIR)common.h $(SERVER_DIR)server.h
 SERVER_SOURCES=$(SERVER_DIR)server.cpp
 SERVER_OBJS=$(OUT_OBJ)server.o
 
@@ -30,7 +30,7 @@ SERVER_OBJS=$(OUT_OBJ)server.o
 
 all: $(OUT_EXE)rshook
 
-$(OUT_EXE)rshook: $(SERVER_OBJS) $(SRC_DIR)rshook.h $(SRC_DIR)rshook.cpp
+$(OUT_EXE)rshook: $(SERVER_OBJS) $(SERVER_HEADERS) $(SRC_DIR)rshook.cpp
 	@mkdir -p $(OUT_EXE)
 	$(CPP) $(CPPFLAGS) -o $(OUT_EXE)rshook $(SERVER_OBJS) $(SRC_DIR)rshook.cpp -luring
 
