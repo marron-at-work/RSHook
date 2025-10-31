@@ -4,7 +4,7 @@
 
 int main(int argc, char **argv)
 {
-    initialize("/static/");
+    initialize("./build/static/");
 
     int server_socket_fd;
     setup_listening_socket(DEFAULT_SERVER_PORT, server_socket_fd);

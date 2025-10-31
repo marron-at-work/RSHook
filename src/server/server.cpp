@@ -103,14 +103,22 @@ int get_line(const char *src, char *dest, size_t dest_sz) {
 void sigint_handler(int signo)
 {
     io_uring_queue_exit(&ring);
+    free(static_rootdir);
+
+    printf("shutdown\n");
     exit(0);
 }
 
 void initialize(const char* static_files_root)
 {
-    char* static_rootdir = realpath(static_files_root, nullptr);
-    static_rootdir_len = strlen(static_rootdir);
-
+    static_rootdir = realpath(static_files_root, nullptr);
+    if(static_rootdir == nullptr) {
+        static_rootdir_len = 0;
+    }
+    else {
+        static_rootdir_len = strlen(static_rootdir);
+    }
+    
     signal(SIGINT, sigint_handler);
     io_uring_queue_init(QUEUE_DEPTH, &ring, 0);
 }
@@ -325,7 +333,7 @@ void handle_get_file_method(const char* path, int client_socket)
     }
 
     strcpy(fullpath, static_rootdir);
-    strcpy(fullpath + static_rootdir_len, path);
+    strcpy(fullpath + static_rootdir_len, path + (strlen(static_prefix) - 1)); //Skip the static prefix but leave the /
 
     char* npath = realpath(fullpath, normalizedpath);
     if(npath == nullptr || strncmp(npath, static_rootdir, static_rootdir_len) != 0) //Make sure we are not escaping the root dir
@@ -408,6 +416,8 @@ int server_loop(int server_socket) {
     socklen_t client_addr_len = sizeof(client_addr);
 
     add_accept_request(server_socket, &client_addr, &client_addr_len);
+
+    printf("Server listening...\n");
 
     while (1)
     {
