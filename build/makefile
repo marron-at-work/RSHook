@@ -11,7 +11,7 @@ SERVER_DIR=$(SRC_DIR)server/
 RSHOOK_TEST_DIR=$(MAKE_PATH)/../test/
 
 #dev is default, for another flavor : make BUILD=release or debug
-BUILD := dev
+BUILD := debug
 
 CPP=g++ 
 CPP_STDFLAGS=-Wall -Wextra -Wno-unused-parameter -Wuninitialized -Werror -std=gnu++20

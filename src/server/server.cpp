@@ -75,6 +75,9 @@ struct request
     struct iovec iov[];
 };
 
+//Since we can only have one outstanding accept at a time we pre-allocate its request structure
+struct request s_accept_req;
+
 struct io_uring ring;
 
 void string_to_lower(char* str) {
@@ -158,9 +161,8 @@ int add_accept_request(int server_socket, struct sockaddr_in *client_addr, sockl
     struct io_uring_sqe *sqe = io_uring_get_sqe(&ring);
     io_uring_prep_accept(sqe, server_socket, (struct sockaddr *)client_addr, client_addr_len, 0);
 
-    struct request* req = (struct request*)malloc(sizeof(struct request));
-    req->event_type = EVENT_TYPE_ACCEPT;
-    io_uring_sqe_set_data(sqe, req);
+    s_accept_req.event_type = EVENT_TYPE_ACCEPT;
+    io_uring_sqe_set_data(sqe, &s_accept_req);
     io_uring_submit(&ring);
 
     return 0;
@@ -422,7 +424,7 @@ int server_loop(int server_socket) {
     while (1)
     {
         int ret = io_uring_wait_cqe(&ring, &cqe);
-        struct request* req = (struct request *)cqe->user_data;
+        struct request* req = (struct request*)cqe->user_data;
         if (ret < 0) {
             //fatal error -- return to main for cleanup
             return ret; //the error code -- later we might be able to recover from some errors
@@ -437,7 +439,7 @@ int server_loop(int server_socket) {
         case EVENT_TYPE_ACCEPT:
             add_accept_request(server_socket, &client_addr, &client_addr_len);
             add_read_request(cqe->res);
-            free(req);
+            //since the accept request is statically pre-allocated and reused don't free it
             break;
         case EVENT_TYPE_READ:
             handle_client_request(req);
